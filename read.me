@@ -1,0 +1,15 @@
+Build with:
+xargo build --target arm-none-eabihf
+
+After building, create the elf with:
+arm-none-eabi-gcc -T linker.ld -o myos.elf -ffreestanding -O2 -nostdlib boot.o ./target/arm-none-eabihf/debug/libkernel.rlib
+
+To emulate with qemu:
+qemu-system-arm -M raspi2 -kernel myos.elf -serial stdio
+_______________________________________________________________________________________________________
+
+If you need to assemble boot.S (although only needs to be done when boot.S changes):
+arm-none-eabi-gcc -mcpu=arm1176jzf-s -fpic -ffreestanding -c boot.S -o boot.o
+
+Big shoutout to the OSdev wiki!
+https://wiki.osdev.org/Raspberry_Pi_Bare_Bones_Rust

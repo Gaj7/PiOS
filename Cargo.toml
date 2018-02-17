@@ -1,0 +1,9 @@
+[package]
+name = "kernel"
+version = "0.1.0"
+authors = ["Grant Jurgensen <gajurgensen@gmail.com>"]
+
+[profile.dev]
+panic = "abort"
+
+[dependencies]
