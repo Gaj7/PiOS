@@ -9,8 +9,10 @@ use core::intrinsics::volatile_store;
 // but raspi1 has peripheral base address 0x20000000. Ensure
 // you are using the correct peripheral address for your
 // hardware.
-const UART_DR: u32 = 0x3F201000;
-const UART_FR: u32 = 0x3F201018;
+const PERIPH_BASE: u32 = 0x3F000000;
+const UART_BASE: u32 = PERIPH_BASE + 0x201000;
+const UART_DR: u32 = UART_BASE;
+const UART_FR: u32 = UART_BASE + 0x18;
 
 fn mmio_write(reg: u32, val: u32) {
     unsafe { volatile_store(reg as *mut u32, val) }
