@@ -1,12 +1,14 @@
 #![no_std]
-#![feature(core_intrinsics, lang_items)]
+#![feature(core_intrinsics, lang_items)] //used here
+#![feature(asm)]                         //used in uart
 
 mod uart;
 use core::intrinsics::abort;
 
 #[no_mangle]
 pub extern fn kernel_main() {
-    uart::write("Hello Rust Kernel world!");
+    uart::init();
+    uart::write("Hello Rust Kernel world!\n");
     loop {
         uart::writec(uart::getc())
     }
