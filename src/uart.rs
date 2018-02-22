@@ -1,5 +1,4 @@
-//#![feature(core_intrinsics)] //not needed because included in parent lib.rs
-//#![feature(asm)] // ^ same
+//#![feature(core_intrinsics, asm)]
 
 use core::intrinsics::volatile_load;
 use core::intrinsics::volatile_store;
@@ -42,12 +41,6 @@ fn mmio_read(reg: u32) -> u32 {
 
 #[cfg(target_arch = "arm")]
 fn delay(mut cycles: u32) {
-    // unsafe { asm!( "__delay_%=: subs %[cycles], %[cycles], #1; bne __delay_%=\n"
-    //              : "=r"(cycles)
-    //              : [cycles]"0"(cycles)
-    //              : "cc"
-    //              : "volatile");
-    //        }
     unsafe { asm!( "__delay_: subs $0, $0, #1; bne __delay_\n"
                  : "=r"(cycles)
                  : "0"(cycles)
@@ -64,7 +57,6 @@ fn receive_fifo_empty() -> bool {
     mmio_read(UART_FR) & (1 << 4) > 0
 }
 
-// Will need to implement this to get it to run real raspi
 pub fn init() {
     // Disable the UART until it is ready
     mmio_write(UART_CR, 0x0);
