@@ -40,14 +40,12 @@ fn mmio_read(reg: u32) -> u32 {
     unsafe { volatile_load(reg as *const u32) }
 }
 
-#[cfg(target_arch = "arm")]
+// Issues the NOP instruction for the number of cycles specified
 fn delay(mut cycles: u32) {
-    unsafe { asm!( "__delay_: subs $0, $0, #1; bne __delay_\n"
-                 : "=r"(cycles)
-                 : "0"(cycles)
-                 : "cc"
-                 : "volatile");
-           }
+    while cycles > 0 {
+        unsafe { asm!("NOP" :::: "volatile" ); }
+        cycles -= 1;
+    }
 }
 
 fn transmit_fifo_full() -> bool {
