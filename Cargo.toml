@@ -6,4 +6,8 @@ authors = ["Grant Jurgensen <gajurgensen@gmail.com>"]
 [profile.dev]
 panic = "abort"
 
+[profile.release]
+panic = "abort"
+
 [dependencies]
+#rlibc = "1.0" # Used for memcpy, memmove, memset, and memcmp

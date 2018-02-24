@@ -1,4 +1,5 @@
 //#![feature(core_intrinsics, asm)]
+#![allow(dead_code)] // Don't complain about unused values
 
 use core::intrinsics::volatile_load;
 use core::intrinsics::volatile_store;
@@ -95,5 +96,21 @@ pub fn getc() -> u8 {
 pub fn write(msg: &str) {
     for c in msg.chars() {
         writec(c as u8)
+    }
+}
+
+pub fn write_hex(num: u32) {
+    write("0x");
+
+    let mut i = 0 ;
+    while i < 8 {
+        let hexit = ((num >> (28 - 4*i) ) & 0xF) as u8;
+        if hexit < 0xA {
+            writec(hexit + 0x30);
+        }
+        else {
+            writec(hexit + 0x37);
+        }
+        i += 1;
     }
 }

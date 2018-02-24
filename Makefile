@@ -1,8 +1,11 @@
-all: elf
+deafult: elf
 
+.PHONY: build boot elf img run clean
+
+#in the future, may need to add a "--cfg" for pi zero/1 vs 2/3, maybe an option for qemu too
 build:
-	xargo build --target arm-none-eabihf
-
+	xargo build --target=arm-none-eabihf
+	
 boot:
 	arm-none-eabi-gcc -mcpu=arm1176jzf-s -fpic -ffreestanding -c boot.S -o boot.o
 
@@ -17,3 +20,4 @@ run: elf
 
 clean:
 	rm -f boot.o piOS.elf kernel.img
+	cargo clean
