@@ -1,6 +1,9 @@
 #![allow(bad_style)] // Stops rust from complaining about non-camelCased structs (ATAG makes camelCase awkward)
 
+// Note: the bootloader sets up the atags. Won't work within QEMU
+
 use core::intrinsics::volatile_load;
+//use uart; //for debug
 
 // ATAG IDs
 const ATAG_NONE:      u32 = 0x00000000;

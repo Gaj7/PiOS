@@ -1,13 +1,14 @@
 #![no_std]
 #![feature(core_intrinsics, lang_items)] //used here
 #![feature(asm)]                         //used in uart
-// #![feature(libc)]
 #![allow(dead_code)] //complaining about unused code is really annoying in early development
 
 use core::intrinsics::abort;
 
 mod uart;
 mod atag;
+mod mem;
+mod video;
 //mod process;
 
 #[no_mangle]
@@ -20,10 +21,19 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write("\n");
 
     let mem_tag = atag::getMemTag(atags_addr);
-    match mem_tag {
-        Option::Some(tag) => uart::write("Mem tag found.\n"),
-        Option::None      => uart::write("No mem tag found.\n"),
-    }
+    let mem_size = match mem_tag {
+        Option::Some(tag) => {
+            uart::write("Mem tag found.\n");
+            tag.size
+        },
+        Option::None => {
+            uart::write("No mem tag found.\n");
+            1024 * 1024 * 128
+        },
+    };
+    uart::write("Mem size: ");
+    uart::write_hex(mem_size);
+    uart::write("\n");
 
     loop {
         uart::writec(uart::getc())
@@ -36,22 +46,13 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
 #[no_mangle]
 pub extern fn __aeabi_unwind_cpp_pr0() {}
 
-#[no_mangle]
-pub extern fn __aeabi_memcpy (dest: *mut u8, src: *const u8, n: usize) -> *mut u8{
-    let mut i = 0;
-    while i < n {
-        unsafe { *dest.offset(i as isize) = *src.offset(i as isize); }
-        i += 1;
-    }
-    dest
-}
-
 #[lang = "panic_fmt"]
 pub extern fn panic_fmt(_: core::fmt::Arguments, _: &'static str, _: u32) -> ! {
     unsafe { abort() }
 }
 
 // There has got to be a better solution than this...
+// This panic defn is expected when attempting plain ol' int addition
 #[no_mangle]
 pub extern fn _ZN4core9panicking5panic17h55432cad82b6074eE() -> ! {
     unsafe { abort() }
