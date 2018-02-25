@@ -20,7 +20,7 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_hex(atags_addr as u32);
     uart::write("\n");
 
-    let mem_tag = atag::getMemTag(atags_addr);
+    let mem_tag = atag::get_mem_tag(atags_addr);
     let mem_size = match mem_tag {
         Option::Some(tag) => {
             uart::write("Mem tag found.\n");
