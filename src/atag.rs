@@ -97,21 +97,26 @@ pub struct Atags {
     pub videolfb: Option<AtagVideolfb>,
     pub cmdline: Option<AtagCmdline>,
 }
+impl Atags {
+    fn new() -> Atags {
+        Atags {
+            core: None,
+            mem: None,
+            videotext: None,
+            ramdisk: None,
+            initrd2: None,
+            serial: None,
+            revision: None,
+            videolfb: None,
+            cmdline: None,
+        }
+    }
+}
 
 // Assumes no more than one of each type of atag
 // addr represents starting address of atags
 pub fn parse_atags (mut addr: u32) -> Atags {
-    let mut atags = Atags {
-        core: None,
-        mem: None,
-        videotext: None,
-        ramdisk: None,
-        initrd2: None,
-        serial: None,
-        revision: None,
-        videolfb: None,
-        cmdline: None,
-    };
+    let mut atags = Atags::new();
     loop {
         let atag = unsafe { volatile_load(addr as *const AtagHeader) };
         if atag.id == CORE_ID {
