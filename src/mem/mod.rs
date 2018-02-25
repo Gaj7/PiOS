@@ -19,5 +19,5 @@ pub extern fn __aeabi_memcpy (dest: *mut u8, src: *const u8, n: usize) -> *mut u
 
 #[no_mangle]
 pub extern fn __aeabi_memcpy4 (dest: *mut u8, src: *const u8, n: usize) -> *mut u8{
-    __aeabi_memcpy (dest, src, n)
+    __aeabi_memcpy (dest, src, n/4)
 }

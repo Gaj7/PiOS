@@ -81,33 +81,64 @@ pub fn init() {
     mmio_write(UART_CR, (1 << 0) | (1 <<8 ) | (1 << 9));
 }
 
-pub fn writec(c: u8) {
+pub fn write_c(c: u8) {
     while transmit_fifo_full() {}
     mmio_write(UART_DR, c as u32);
 }
 
-pub fn getc() -> u8 {
+pub fn get_c() -> u8 {
     while receive_fifo_empty() {}
     mmio_read(UART_DR) as u8
 }
 
 pub fn write(msg: &str) {
     for c in msg.chars() {
-        writec(c as u8)
+        write_c(c as u8)
+    }
+}
+
+pub fn write_u32(num: u32) {
+    if num == 0 {
+        write_c('0' as u8);
+    }
+    else if let Some(digit) = next_digit(num) {
+        write_c(digit);
+    }
+}
+// Helper function for write_num. Recursive solution takes advantage of backtracking to correct
+// the order digits write in. A straightforward print loop would print in reverse order
+fn next_digit(num: u32) -> Option<u8>{
+    if num == 0 {
+        return None
+    }
+    else {
+        if let Some(digit) = next_digit(num/10) {
+            write_c(digit);
+        }
+        return Some(((num % 10) + 0x30) as u8);
+    }
+}
+
+pub fn write_i32(num: i32) {
+    if num < 0 {
+        write_c('-' as u8);
+        write_u32((num * -1) as u32);
+    }
+    else {
+        write_u32(num as u32);
     }
 }
 
 pub fn write_hex(num: u32) {
     write("0x");
-
     let mut i = 0 ;
     while i < 8 {
         let hexit = ((num >> (28 - 4*i) ) & 0xF) as u8;
         if hexit < 0xA {
-            writec(hexit + 0x30);
+            write_c(hexit + 0x30);
         }
         else {
-            writec(hexit + 0x37);
+            write_c(hexit + 0x37);
         }
         i += 1;
     }

@@ -17,16 +17,16 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write("piOS booted!\n");
 
     uart::write("atags start addr: ");
-    uart::write_hex(atags_addr as u32);
+    uart::write_u32(atags_addr);
     uart::write("\n");
 
     let atags = atag::parse_atags(atags_addr);
     let mem_size = match atags.mem {
-        Option::Some(tag) => {
+        Some(tag) => {
             uart::write("Mem tag found.\n");
             tag.size
         },
-        Option::None => {
+        None => {
             uart::write("No mem tag found.\n");
             1024 * 1024 * 128
         },
@@ -36,7 +36,7 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write("\n");
 
     loop {
-        uart::writec(uart::getc())
+        uart::write_c(uart::get_c())
     }
 }
 
