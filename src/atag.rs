@@ -23,9 +23,9 @@ struct AtagHeader {
 }
 
 pub struct AtagCore {
-    flags: u32,
-    page_size: u32,
-    root_dev: u32,
+    pub flags: u32,
+    pub page_size: u32,
+    pub root_dev: u32,
 }
 
 pub struct AtagMem {
@@ -34,71 +34,72 @@ pub struct AtagMem {
 }
 
 pub struct AtagVideotext {
-    x: u8,
-    y: u8,
-    video_page: u16,
-    video_mode: u8,
-    video_cols: u8,
-    video_ega_bx: u16,
-    video_lines: u8,
-    video_isvga: u8,
-    video_points: u16,
+    pub x: u8,
+    pub y: u8,
+    pub video_page: u16,
+    pub video_mode: u8,
+    pub video_cols: u8,
+    pub video_ega_bx: u16,
+    pub video_lines: u8,
+    pub video_isvga: u8,
+    pub video_points: u16,
 }
 
 pub struct AtagRamdisk {
-    flags: u32,
-    size: u32,
-    start: u32,
+    pub flags: u32,
+    pub size: u32,
+    pub start: u32,
 }
 
 pub struct AtagInitrd2 {
-    start: u32,
-    size: u32,
+    pub start: u32,
+    pub size: u32,
 }
 
 pub struct AtagSerial {
-    low: u32,
-    high: u32,
+    pub low: u32,
+    pub high: u32,
 }
 
 pub struct AtagRevision {
-    rev: u32,
+    pub rev: u32,
 }
 
 pub struct AtagVideolfb {
-    lfb_width: u16,
-    lfb_height: u16,
-    lfb_depth: u16,
-    lfb_linelength: u16,
-    lfb_base: u32,
-    lfb_size: u32,
-    red_size: u8,
-    red_pos: u8,
-    green_size: u8,
-    green_pos: u8,
-    blue_size: u8,
-    blue_pos: u8,
-    rsvd_size: u8,
-    rsvd_pos: u8,
+    pub lfb_width: u16,
+    pub lfb_height: u16,
+    pub lfb_depth: u16,
+    pub lfb_linelength: u16,
+    pub lfb_base: u32,
+    pub lfb_size: u32,
+    pub red_size: u8,
+    pub red_pos: u8,
+    pub green_size: u8,
+    pub green_pos: u8,
+    pub blue_size: u8,
+    pub blue_pos: u8,
+    pub rsvd_size: u8,
+    pub rsvd_pos: u8,
 }
 
 pub struct AtagCmdline {
-    cmdline: [u8; 1], //minimum size: array of u8, size 1
+    pub cmdline: [u8; 1], //minimum size: array of u8, size 1
 }
 
 pub struct Atags {
-    core: Option<AtagCore>,
-    mem: Option<AtagMem>,
-    videotext: Option<AtagVideotext>,
-    ramdisk: Option<AtagRamdisk>,
-    initrd2: Option<AtagInitrd2>,
-    serial: Option<AtagSerial>,
-    revision: Option<AtagRevision>,
-    videolfb: Option<AtagVideolfb>,
-    cmdline: Option<AtagCmdline>,
+    pub core: Option<AtagCore>,
+    pub mem: Option<AtagMem>,
+    pub videotext: Option<AtagVideotext>,
+    pub ramdisk: Option<AtagRamdisk>,
+    pub initrd2: Option<AtagInitrd2>,
+    pub serial: Option<AtagSerial>,
+    pub revision: Option<AtagRevision>,
+    pub videolfb: Option<AtagVideolfb>,
+    pub cmdline: Option<AtagCmdline>,
 }
 
-//assumes no more than one of each type of atag
+// Assumes no more than one of each type of atag
+// addr represents starting address of atags
 pub fn parse_atags (mut addr: u32) -> Atags {
     let mut atags = Atags {
         core: None,
@@ -139,7 +140,7 @@ pub fn parse_atags (mut addr: u32) -> Atags {
     atags
 }
 
-//Deprecated: use parse_atags
+// Deprecated: use parse_atags
 pub fn get_mem_tag (mut addr: u32) -> Option<AtagMem> {
     loop {
         let atag = unsafe { volatile_load(addr as *const AtagHeader) };

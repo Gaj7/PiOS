@@ -5,11 +5,11 @@
 
 use core::intrinsics::abort;
 
-mod uart;
-mod atag;
-mod mem;
-mod video;
-//mod process;
+pub mod uart;
+pub mod atag;
+pub mod mem;
+pub mod video;
+//pub mod process;
 
 #[no_mangle]
 pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
@@ -20,8 +20,8 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_hex(atags_addr as u32);
     uart::write("\n");
 
-    let mem_tag = atag::get_mem_tag(atags_addr);
-    let mem_size = match mem_tag {
+    let atags = atag::parse_atags(atags_addr);
+    let mem_size = match atags.mem {
         Option::Some(tag) => {
             uart::write("Mem tag found.\n");
             tag.size
