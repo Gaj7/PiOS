@@ -34,7 +34,6 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write("Mem size: ");
     uart::write_u32(mem_size);
     uart::write("\n");
-    uart::write_hex(mem_size);
 
     loop {
         uart::write_c(uart::get_c())
