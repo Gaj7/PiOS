@@ -17,7 +17,7 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write("piOS booted!\n");
 
     uart::write("atags start addr: ");
-    uart::write_u32(atags_addr);
+    uart::write_hex(atags_addr);
     uart::write("\n");
 
     let atags = atag::parse_atags(atags_addr);
@@ -32,8 +32,9 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
         },
     };
     uart::write("Mem size: ");
-    uart::write_hex(mem_size);
+    uart::write_u32(mem_size);
     uart::write("\n");
+    uart::write_hex(mem_size);
 
     loop {
         uart::write_c(uart::get_c())

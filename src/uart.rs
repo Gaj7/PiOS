@@ -105,7 +105,7 @@ pub fn write_u32(num: u32) {
         write_c(digit);
     }
 }
-// Helper function for write_num. Recursive solution takes advantage of backtracking to correct
+// Helper function for write_u32. Recursive solution takes advantage of backtracking to correct
 // the order digits write in. A straightforward print loop would print in reverse order
 fn next_digit(num: u32) -> Option<u8>{
     if num == 0 {
