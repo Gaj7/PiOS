@@ -1,5 +1,5 @@
 [package]
-name = "kernel"
+name = "PiOS"
 version = "0.1.0"
 authors = ["Grant Jurgensen <gajurgensen@gmail.com>"]
 
@@ -10,4 +10,3 @@ panic = "abort"
 panic = "abort"
 
 [dependencies]
-#rlibc = "1.0" # Used for memcpy, memmove, memset, and memcmp

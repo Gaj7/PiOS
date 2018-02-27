@@ -3,6 +3,8 @@
 
 //pub mod alloc;
 
+//info needed: start, total size, page size, mmu info
+
 // pub fn init (mem_tag: atag::ATAG_Mem) {
 //
 // }
