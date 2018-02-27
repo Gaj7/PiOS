@@ -10,12 +10,12 @@ If you want to emulate the OS rather than testing on an actual Raspberry Pi, you
 
 ## Compiling and Running
 This project uses a Makefile rather than relying entirely on the Cargo build system because the compilation process is complicated by targeting a bare-metal system.
-To build the project and run it in QEMU, use the command
+To build the project and run it in QEMU, use the command:
 ```
 make run
 ```
 
-To build this project for use on an actual Raspberry Pi, type
+To build this project for use on an actual Raspberry Pi, type:
 ```
 make img
 ```
@@ -23,5 +23,7 @@ This builds the kernel and converts it to an image. You then will need to copy t
 
 ## Acknowledgments
 Big shoutout to the OSdev wiki! They have a great introduction to getting a bare-metal project to boot on a Raspberry Pi, as well as setting up cross-compilers.
+
 https://wiki.osdev.org/Raspberry_Pi_Bare_Bones
+
 https://wiki.osdev.org/Raspberry_Pi_Bare_Bones_Rust
