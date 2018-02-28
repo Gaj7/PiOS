@@ -47,8 +47,8 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
         Some(addr) => uart::write_u32(addr),
         None => uart::write("NONE"),
     };
-    uart::write("\nAllocating 128 bytes: got back address ");
-    match ff.alloc(128) {
+    uart::write("\nAllocating 100 bytes: got back address ");
+    match ff.alloc(120) {
         Some(addr) => uart::write_u32(addr),
         None => uart::write("NONE"),
     };

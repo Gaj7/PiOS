@@ -1,5 +1,5 @@
 const HEADER_SIZE: u32 = 8; //or 5? better to be safe with 8
-struct BlockHeader {
+struct BlockHeader {        //would it be simpler if size didn't include header size?
     empty: bool,
     size: u32,
 }
@@ -30,11 +30,11 @@ impl FirstFitAlloc {
                 if curr_block.empty && (curr_block.size - HEADER_SIZE) >= size {
                     curr_block.empty = false;
                     if curr_block.size - size > HEADER_SIZE {
-                        *((curr_addr + size) as *mut BlockHeader) = BlockHeader {
+                        *((curr_addr + size + HEADER_SIZE) as *mut BlockHeader) = BlockHeader {
                             empty: true,
-                            size: (curr_block.size - size),
+                            size: (curr_block.size - size) + HEADER_SIZE,
                         };
-                        curr_block.size = size;
+                        curr_block.size = size + HEADER_SIZE;
                     }
                     return Some(curr_addr + HEADER_SIZE);
                 }
