@@ -1,7 +1,9 @@
 
 //use atag;
 
-//pub mod alloc;
+// pub mod alloc;
+pub mod first_fit;
+// pub mod list;
 
 //info needed: start, total size, page size, mmu info
 
