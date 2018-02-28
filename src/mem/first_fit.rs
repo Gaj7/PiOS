@@ -16,11 +16,35 @@ impl FirstFitAlloc {
             end: end,
         }
     }
-    pub fn alloc(size: u32) -> Option<u32> {
+
+    pub fn alloc(&self, size: u32) -> Option<u32> {
+        let mut curr_addr = self.begin;
+        while curr_addr < self.end {
+            unsafe {
+                let curr_block: &mut BlockHeader = &mut *(curr_addr as *mut BlockHeader);
+                if curr_block.empty && (curr_block.size - HEADER_SIZE) >= size {
+                    curr_block.empty = false;
+                    if curr_block.size - size > HEADER_SIZE {
+                        *((curr_addr + size) as *mut BlockHeader) = BlockHeader {
+                            empty: true,
+                            size: (curr_block.size - size),
+                        };
+                        curr_block.size = size;
+                    }
+                    return Some(curr_addr + HEADER_SIZE);
+                }
+                else {
+                    curr_addr += curr_block.size;
+                }
+            }
+        }
         None
     }
+
+    //pub fn free(&self, )
 }
 
+const HEADER_SIZE: u32 = 8; //or 5? better to be safe with 8
 struct BlockHeader {
     empty: bool,
     size: u32,
