@@ -26,6 +26,7 @@ impl FirstFitAlloc {
         }
     }
 
+    //TODO: combine neighboring free blocks during traversal
     pub fn alloc(&self, size: u32) -> Option<u32> {
         let mut curr_addr = self.begin;
         while curr_addr < self.end {
@@ -50,5 +51,10 @@ impl FirstFitAlloc {
         None
     }
 
-    //pub fn free(&self, )
+    pub fn free(&self, addr: u32) {
+        unsafe {
+            let curr_block: &mut BlockHeader = &mut *((addr - HEADER_SIZE) as *mut BlockHeader);
+            curr_block.empty = true;
+        }
+    }
 }
