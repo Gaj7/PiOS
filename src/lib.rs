@@ -35,6 +35,15 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_u32(mem_size);
     uart::write("\n");
 
+    test_ff();
+
+    loop {
+        uart::write_c(uart::get_c())
+    }
+}
+
+fn test_ff() {
+    // First Fit Allocator tests
     uart::write("Testing: First fit memory allocator:\nSetting range 0 to 256.\n");
     let ff = mem::first_fit::FirstFitAlloc::new(0,256);
     uart::write("Allocating 50 bytes: got back address ");
@@ -43,20 +52,33 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
         None => uart::write("NONE"),
     };
     uart::write("\nAllocating 74 bytes: got back address ");
-    match ff.alloc(74) {
-        Some(addr) => uart::write_u32(addr),
-        None => uart::write("NONE"),
+    let test_alloc = match ff.alloc(74) {
+        Some(addr) => {
+            uart::write_u32(addr);
+            addr
+        },
+        None => {
+            uart::write("NONE");
+            0
+        },
     };
     uart::write("\nAllocating 100 bytes: got back address ");
     match ff.alloc(120) {
         Some(addr) => uart::write_u32(addr),
         None => uart::write("NONE"),
     };
-
-
-    loop {
-        uart::write_c(uart::get_c())
-    }
+    uart::write("\nAllocating 40 bytes: got back address ");
+    match ff.alloc(40) {
+        Some(addr) => uart::write_u32(addr),
+        None => uart::write("NONE"),
+    };
+    uart::write("\nFreeing our second allocation.");
+    ff.free(test_alloc);
+    uart::write("\nAllocating 40 bytes: got back address ");
+    match ff.alloc(40) {
+        Some(addr) => uart::write_u32(addr),
+        None => uart::write("NONE"),
+    };
 }
 
 // These functions below provide definitions for symbols libcore
