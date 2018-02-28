@@ -35,6 +35,25 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_u32(mem_size);
     uart::write("\n");
 
+    uart::write("Testing: First fit memory allocator:\nSetting range 0 to 256.\n");
+    let ff = mem::first_fit::FirstFitAlloc::new(0,256);
+    uart::write("Allocating 50 bytes: got back address ");
+    match ff.alloc(50) {
+        Some(addr) => uart::write_u32(addr),
+        None => uart::write("NONE"),
+    };
+    uart::write("\nAllocating 74 bytes: got back address ");
+    match ff.alloc(74) {
+        Some(addr) => uart::write_u32(addr),
+        None => uart::write("NONE"),
+    };
+    uart::write("\nAllocating 128 bytes: got back address ");
+    match ff.alloc(128) {
+        Some(addr) => uart::write_u32(addr),
+        None => uart::write("NONE"),
+    };
+
+
     loop {
         uart::write_c(uart::get_c())
     }

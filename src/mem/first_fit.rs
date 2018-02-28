@@ -1,8 +1,13 @@
+const HEADER_SIZE: u32 = 8; //or 5? better to be safe with 8
+struct BlockHeader {
+    empty: bool,
+    size: u32,
+}
+
 pub struct FirstFitAlloc {
     begin: u32,
     end: u32,
 }
-
 impl FirstFitAlloc {
     pub fn new(begin: u32, end: u32) -> FirstFitAlloc {
         unsafe {
@@ -42,10 +47,4 @@ impl FirstFitAlloc {
     }
 
     //pub fn free(&self, )
-}
-
-const HEADER_SIZE: u32 = 8; //or 5? better to be safe with 8
-struct BlockHeader {
-    empty: bool,
-    size: u32,
 }
