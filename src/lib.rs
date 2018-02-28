@@ -14,7 +14,7 @@ pub mod video;
 #[no_mangle]
 pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::init();
-    uart::write("piOS booted!\n");
+    uart::write("PiOS booted!\n");
 
     uart::write("atags start addr: ");
     uart::write_hex(atags_addr);
@@ -33,7 +33,7 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     };
     uart::write("Mem size: ");
     uart::write_u32(mem_size);
-    uart::write("\n");
+    uart::write("\n\n");
 
     test_ff();
 
@@ -43,42 +43,24 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
 }
 
 fn test_ff() {
-    // First Fit Allocator tests
     uart::write("Testing: First fit memory allocator:\nSetting range 0 to 256.\n");
     let ff = mem::first_fit::FirstFitAlloc::new(0,256);
-    uart::write("Allocating 50 bytes: got back address ");
-    match ff.alloc(50) {
-        Some(addr) => uart::write_u32(addr),
-        None => uart::write("NONE"),
-    };
-    uart::write("\nAllocating 74 bytes: got back address ");
-    let test_alloc = match ff.alloc(74) {
-        Some(addr) => {
-            uart::write_u32(addr);
-            addr
-        },
-        None => {
-            uart::write("NONE");
-            0
-        },
-    };
-    uart::write("\nAllocating 100 bytes: got back address ");
-    match ff.alloc(120) {
-        Some(addr) => uart::write_u32(addr),
-        None => uart::write("NONE"),
-    };
-    uart::write("\nAllocating 40 bytes: got back address ");
-    match ff.alloc(40) {
-        Some(addr) => uart::write_u32(addr),
-        None => uart::write("NONE"),
-    };
-    uart::write("\nFreeing our second allocation.");
+    ff.debug_print();
+    uart::write("Allocating 50 bytes:\n");
+    ff.alloc(50);
+    ff.debug_print();
+    uart::write("Allocating 74 bytes:\n");
+    let test_alloc = (ff.alloc(74)).unwrap();
+    ff.debug_print();
+    uart::write("Allocating 100 bytes:\n");
+    ff.alloc(100);
+    ff.debug_print();
+    uart::write("Freeing our second allocation:\n");
     ff.free(test_alloc);
-    uart::write("\nAllocating 40 bytes: got back address ");
-    match ff.alloc(40) {
-        Some(addr) => uart::write_u32(addr),
-        None => uart::write("NONE"),
-    };
+    ff.debug_print();
+    uart::write("Allocating 40 bytes:\n");
+    ff.alloc(40);
+    ff.debug_print();
 }
 
 // These functions below provide definitions for symbols libcore

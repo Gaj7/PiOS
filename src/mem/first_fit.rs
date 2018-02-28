@@ -1,6 +1,7 @@
 //Note: due to u32 typing of size, this implementation does not support larger ranges than 1 << 32 = 4GB
 
 use core::intrinsics::size_of;
+use uart; //for debug print
 
 const HEADER_SIZE: u32 = unsafe { size_of::<BlockHeader>() } as u32;
 struct BlockHeader {
@@ -40,7 +41,7 @@ impl FirstFitAlloc {
                         if curr_block.size - size > HEADER_SIZE {
                             *((curr_addr + size + HEADER_SIZE) as *mut BlockHeader) = BlockHeader {
                                 empty: true,
-                                size: (curr_block.size - size) + HEADER_SIZE,
+                                size: (curr_block.size - size) - HEADER_SIZE,
                             };
                             curr_block.size = size + HEADER_SIZE;
                         }
@@ -71,6 +72,26 @@ impl FirstFitAlloc {
         unsafe {
             let curr_block: &mut BlockHeader = &mut *((addr - HEADER_SIZE) as *mut BlockHeader);
             curr_block.empty = true;
+        }
+    }
+
+    pub fn debug_print(&self) {
+        let mut curr_addr = self.begin;
+        let mut block_num = 0;
+        while curr_addr < self.end {
+            unsafe {
+                let curr_block: &mut BlockHeader = &mut *(curr_addr as *mut BlockHeader);
+                uart::write("Block ");
+                uart::write_u32(block_num);
+                uart::write(":\tAddress: ");
+                uart::write_u32(curr_addr);
+                uart::write(",\tSize: ");
+                uart::write_u32(curr_block.size);
+                uart::write( if curr_block.empty {",\tEmpty.\n"} else {",\tFull.\n"});
+
+                curr_addr += curr_block.size;
+                block_num += 1;
+            }
         }
     }
 }
