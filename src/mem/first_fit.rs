@@ -1,7 +1,11 @@
-const HEADER_SIZE: u32 = 8; //or 5? better to be safe with 8
-struct BlockHeader {        //would it be simpler if size didn't include header size?
+//Note: due to u32 typing of size, this implementation does not support larger ranges than 1 << 32 = 4GB
+
+use core::intrinsics::size_of;
+
+const HEADER_SIZE: u32 = unsafe { size_of::<BlockHeader>() } as u32;
+struct BlockHeader {
     empty: bool,
-    size: u32,
+    size: u32, //size of block in bytes, INCLUDING header size, which is 8;
 }
 
 pub struct FirstFitAlloc {
