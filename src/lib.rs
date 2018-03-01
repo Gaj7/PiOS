@@ -6,12 +6,12 @@
 
 use core::intrinsics::abort;
 
-#[macro_use]
+//#[macro_use]
 pub mod uart;
-
 pub mod atag;
 pub mod mem;
-pub mod video;
+pub mod test;
+//pub mod video;
 //pub mod process;
 
 #[no_mangle]
@@ -38,33 +38,13 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_u32(mem_size);
     uart::write_str("\n\n");
 
-    test_ff();
+    test::test_ff();
 
     loop {
         uart::write_c(uart::get_c())
     }
 }
 
-fn test_ff() {
-    uart::write_str("Testing: First fit memory allocator:\nSetting range 0 to 256.\n");
-    let ff = mem::first_fit::FirstFitAlloc::new(0,256);
-    ff.debug_print();
-    uart::write_str("Allocating 50 bytes:\n");
-    ff.alloc(50);
-    ff.debug_print();
-    uart::write_str("Allocating 74 bytes:\n");
-    let test_alloc = (ff.alloc(74)).unwrap();
-    ff.debug_print();
-    uart::write_str("Allocating 100 bytes:\n");
-    ff.alloc(100);
-    ff.debug_print();
-    uart::write_str("Freeing our second allocation:\n");
-    ff.free(test_alloc);
-    ff.debug_print();
-    uart::write_str("Allocating 40 bytes:\n");
-    ff.alloc(40);
-    ff.debug_print();
-}
 
 // These functions below provide definitions for symbols libcore
 // expects which are not present on our bare metal target.
