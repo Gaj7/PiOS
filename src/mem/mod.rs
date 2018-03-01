@@ -1,15 +1,16 @@
+use atag;
 
-//use atag;
-
-// pub mod alloc;
-pub mod first_fit;
+pub mod alloc;
 // pub mod list;
 
 //info needed: start, total size, page size, mmu info
 
-// pub fn init (mem_tag: atag::ATAG_Mem) {
-//
-// }
+pub fn init (mem_tag: atag::AtagMem) {
+    //init heap mem
+}
+
+// These functions below provide definitions for symbols libcore
+// expects which are not present on our bare metal target.
 
 #[no_mangle]
 pub extern fn __aeabi_memcpy (dest: *mut u8, src: *const u8, n: usize) -> *mut u8{

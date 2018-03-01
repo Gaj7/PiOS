@@ -3,7 +3,7 @@ use mem;
 
 pub fn test_ff() {
     uart::write_str("Testing: First fit memory allocator:\nSetting range 0 to 256.\n");
-    let ff = mem::first_fit::FirstFitAlloc::new(0,256);
+    let ff = mem::alloc::first_fit::FirstFitAlloc::new(0,256);
     ff.debug_print();
     uart::write_str("Allocating 50 bytes:\n");
     ff.alloc(50);
