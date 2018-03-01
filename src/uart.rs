@@ -32,7 +32,7 @@ const UART_ITIP:   u32 = UART_BASE + 0x84;
 const UART_ITOP:   u32 = UART_BASE + 0x88;
 const UART_TDR:    u32 = UART_BASE + 0x8c;
 
-fn mmio_write(reg: u32, val: u32) {
+fn mmio_write_str(reg: u32, val: u32) {
     unsafe { volatile_store(reg as *mut u32, val) }
 }
 
@@ -58,32 +58,32 @@ fn receive_fifo_empty() -> bool {
 
 pub fn init() {
     // Disable the UART until it is ready
-    mmio_write(UART_CR, 0x0);
+    mmio_write_str(UART_CR, 0x0);
 
     // Disable pull up/down for pins 14 and 15
-    mmio_write(GPPUD, 0x0);
+    mmio_write_str(GPPUD, 0x0);
     delay(150);
-    mmio_write(GPPUDCLK0, (1 << 14) | (1 << 15));
+    mmio_write_str(GPPUDCLK0, (1 << 14) | (1 << 15));
     delay(150);
-    mmio_write(GPPUDCLK0, 0x0);
+    mmio_write_str(GPPUDCLK0, 0x0);
 
     // Set baud rate 1/40
-    mmio_write(UART_IBRD, 1);
-    mmio_write(UART_FBRD, 40);
+    mmio_write_str(UART_IBRD, 1);
+    mmio_write_str(UART_FBRD, 40);
 
     // Enable FIFO (4) and set word length to 8 bits (5 and 6)
-    mmio_write(UART_LCRH, (1 << 4) | (1 << 5) | (1 << 6));
+    mmio_write_str(UART_LCRH, (1 << 4) | (1 << 5) | (1 << 6));
 
     // Mask all interrupts (bits 0, 2, 3, and 11+ all unused)
-    mmio_write(UART_IMSC, (1 << 1) | (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9) | (1 << 10));
+    mmio_write_str(UART_IMSC, (1 << 1) | (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9) | (1 << 10));
 
     // Enable UART (0), enable transnmit and receive (8 and 9)
-    mmio_write(UART_CR, (1 << 0) | (1 <<8 ) | (1 << 9));
+    mmio_write_str(UART_CR, (1 << 0) | (1 <<8 ) | (1 << 9));
 }
 
 pub fn write_c(c: u8) {
     while transmit_fifo_full() {}
-    mmio_write(UART_DR, c as u32);
+    mmio_write_str(UART_DR, c as u32);
 }
 
 pub fn get_c() -> u8 {
@@ -91,7 +91,7 @@ pub fn get_c() -> u8 {
     mmio_read(UART_DR) as u8
 }
 
-pub fn write(msg: &str) {
+pub fn write_str(msg: &str) {
     for c in msg.chars() {
         write_c(c as u8)
     }
@@ -130,7 +130,7 @@ pub fn write_i32(num: i32) {
 }
 
 pub fn write_hex(num: u32) {
-    write("0x");
+    write_str("0x");
     let mut i = 0 ;
     while i < 8 {
         let hexit = ((num >> (28 - 4*i) ) & 0xF) as u8;
@@ -143,3 +143,9 @@ pub fn write_hex(num: u32) {
         i += 1;
     }
 }
+
+// TODO: write macro a la print! or printf() that inserts arbitrary num of args into string
+// #[macro_export]
+// macro_rules! my_write {
+//     ($($arg:tt)*) => (uart::write_str( (format_args!($($arg)*)).fmt() ));
+// }

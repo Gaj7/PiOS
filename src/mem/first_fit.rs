@@ -81,13 +81,13 @@ impl FirstFitAlloc {
         while curr_addr < self.end {
             unsafe {
                 let curr_block: &mut BlockHeader = &mut *(curr_addr as *mut BlockHeader);
-                uart::write("Block ");
+                uart::write_str("Block ");
                 uart::write_u32(block_num);
-                uart::write(":\tAddress: ");
+                uart::write_str(":\tAddress: ");
                 uart::write_u32(curr_addr);
-                uart::write(",\tSize: ");
+                uart::write_str(",\tSize: ");
                 uart::write_u32(curr_block.size);
-                uart::write( if curr_block.empty {",\tEmpty.\n"} else {",\tFull.\n"});
+                uart::write_str( if curr_block.empty {",\tEmpty.\n"} else {",\tFull.\n"});
 
                 curr_addr += curr_block.size;
                 block_num += 1;
