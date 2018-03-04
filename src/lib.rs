@@ -2,11 +2,12 @@
 #![feature(core_intrinsics, lang_items)] //used here
 // #![feature(use_extern_macros)]
 #![feature(asm)]                         //used in uart
+#![feature(ptr_internals)]               //used in mem/alloc
 #![allow(dead_code)] //complaining about unused code is really annoying in early development
 
 use core::intrinsics::abort;
 
-//#[macro_use]
+// #[macro_use]
 pub mod uart;
 pub mod atag;
 pub mod mem;
@@ -24,21 +25,27 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_str("\n");
 
     let atags = atag::parse_atags(atags_addr);
-    let mem_size = match atags.mem {
+    let mem_tag = match atags.mem {
         Some(tag) => {
             uart::write_str("Mem tag found.\n");
-            tag.size
+            tag
         },
         None => {
             uart::write_str("No mem tag found.\n");
-            1024 * 1024 * 128
+            atag::AtagMem {
+                size: 1024 * 1024 * 128, //128 MB
+                start: 0,
+            }
         },
     };
     uart::write_str("Mem size: ");
-    uart::write_u32(mem_size);
+    uart::write_u32(mem_tag.size);
     uart::write_str("\n\n");
+    mem::init(mem_tag);
 
     test::test_ff();
+    uart::write_str("\n\n");
+    test::test_box();
 
     loop {
         uart::write_c(uart::get_c())

@@ -10,8 +10,8 @@ struct BlockHeader {
 }
 
 pub struct FirstFitAlloc {
-    begin: u32,
-    end: u32,
+    pub begin: u32,
+    pub end: u32,
 }
 impl FirstFitAlloc {
     // Initializes allocator over range, with a single empty block over entire range

@@ -1,12 +1,16 @@
-use atag;
-
 pub mod alloc;
-// pub mod list;
+pub mod data_structs;
 
-//info needed: start, total size, page size, mmu info
+use atag;
+use mem::alloc::first_fit::FirstFitAlloc;
+
+// Global var for heap allocator
+static mut HEAP_ALLOC: FirstFitAlloc = FirstFitAlloc {begin: 0, end: 0};
 
 pub fn init (mem_tag: atag::AtagMem) {
-    //init heap mem
+    unsafe {
+        HEAP_ALLOC = FirstFitAlloc::new(mem_tag.start, mem_tag.size - mem_tag.start);
+    }
 }
 
 // These functions below provide definitions for symbols libcore

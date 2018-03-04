@@ -147,5 +147,5 @@ pub fn write_hex(num: u32) {
 // TODO: write macro a la print! or printf() that inserts arbitrary num of args into string
 // #[macro_export]
 // macro_rules! my_write {
-//     ($($arg:tt)*) => (uart::write_str( (format_args!($($arg)*)).fmt() ));
+//     ($($arg:tt)*) => (uart::write_str( (format!($($arg)*)) ));
 // }
