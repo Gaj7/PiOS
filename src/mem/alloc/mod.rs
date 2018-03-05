@@ -2,6 +2,7 @@ pub mod first_fit;
 // pub mod buddy;
 
 use core::intrinsics::size_of;
+use core::ops::Deref;
 use mem::HEAP_ALLOC;
 
 pub struct Box<T>{ //<T: ?Sized> ?
@@ -16,7 +17,7 @@ impl<T> Box<T> {
             Box { elem: addr }
         }
     }
-    
+
     // Should manual deletion be allowed, or just let Drop take care of it?
     pub fn del(&self) {
         unsafe {
