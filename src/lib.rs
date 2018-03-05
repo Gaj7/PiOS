@@ -17,6 +17,7 @@ pub mod test;
 
 #[no_mangle]
 pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
+    // UART init
     uart::init();
     uart::write_str("PiOS booted!\n");
 
@@ -24,6 +25,7 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_hex(atags_addr);
     uart::write_str("\n");
 
+    // Memory init
     let atags = atag::parse_atags(atags_addr);
     let mem_tag = match atags.mem {
         Some(tag) => {
@@ -43,10 +45,12 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     uart::write_str("\n\n");
     mem::init(mem_tag);
 
+    // Tests
     test::test_ff();
     uart::write_str("\n\n");
     test::test_box();
 
+    // Recieve/transmit loop
     loop {
         uart::write_c(uart::get_c())
     }
