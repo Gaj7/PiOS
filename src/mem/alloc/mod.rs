@@ -16,9 +16,7 @@ impl<T> Box<T> {
             Box { elem: addr }
         }
     }
-    pub fn deref(&self) -> &T {
-        unsafe { &*self.elem }
-    }
+    
     // Should manual deletion be allowed, or just let Drop take care of it?
     pub fn del(&self) {
         unsafe {
@@ -31,5 +29,12 @@ impl<T> Box<T> {
 impl<T> Drop for Box<T> {
     fn drop(&mut self) {
         self.del();
+    }
+}
+
+impl<T> Deref for Box<T> {
+    type Target = T;
+    fn deref(&self) -> &T {
+        unsafe { &*self.elem }
     }
 }
