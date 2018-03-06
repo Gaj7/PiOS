@@ -49,12 +49,18 @@ impl FirstFitAlloc {
                     }
                     // else if next block is free, combine them
                     else {
-                        let next_block: &mut BlockHeader = &mut *((curr_addr + curr_block.size) as *mut BlockHeader);
-                        if next_block.empty {
-                            curr_block.size += next_block.size;
+                        let next_addr = curr_addr + curr_block.size;
+                        if next_addr < self.end {
+                            let next_block: &mut BlockHeader = &mut *(next_addr as *mut BlockHeader);
+                            if next_block.empty {
+                                curr_block.size += next_block.size;
+                            }
+                            else {
+                                curr_addr = next_addr;
+                            }
                         }
                         else {
-                            curr_addr += curr_block.size;
+                            curr_addr = next_addr;
                         }
                     }
                 }
