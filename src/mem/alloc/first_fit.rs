@@ -16,6 +16,8 @@ pub struct FirstFitAlloc {
 impl FirstFitAlloc {
     // Initializes allocator over range, with a single empty block over entire range
     pub fn new(begin: u32, end: u32) -> FirstFitAlloc {
+        // Check that the range is large enough for us to actually be able to alloc
+        assert!((end - begin) > HEADER_SIZE);
         unsafe {
             *(begin as *mut BlockHeader) = BlockHeader {
                 empty: true,
@@ -31,7 +33,8 @@ impl FirstFitAlloc {
     // Combines neighboring free blocks of memory during traversal, returns address corresponding to first free block of memory large enough to fullfill the request.
     pub fn alloc(&self, size: u32) -> Option<u32> {
         let mut curr_addr = self.begin;
-        while curr_addr < self.end {
+        let mut next_addr = 0 as u32; // Just a placeholder value
+        loop {
             unsafe {
                 let curr_block: &mut BlockHeader = &mut *(curr_addr as *mut BlockHeader);
                 if curr_block.empty {
@@ -49,31 +52,25 @@ impl FirstFitAlloc {
                     }
                     // else if next block is free, combine them
                     else {
-                        let next_addr = curr_addr + curr_block.size;
-                        if next_addr < self.end {
+                        next_addr = curr_addr + curr_block.size;
+                        if next_addr < (self.end - HEADER_SIZE) {
                             let next_block: &mut BlockHeader = &mut *(next_addr as *mut BlockHeader);
                             if next_block.empty {
                                 curr_block.size += next_block.size;
-                            }
-                            else {
-                                curr_addr = next_addr;
+                                continue;
                             }
                         }
                         else {
-                            curr_addr = next_addr;
+                            return None;
                         }
                     }
                 }
-                else {
-                    curr_addr += curr_block.size;
-                }
+                curr_addr = next_addr;
             }
         }
-        // traversed entire memory without finding a valid candidate
-        None
     }
 
-    // Simply marks address as empty
+    // Simply marks address as empty, neighboring empties will be combined during alloc traversal
     pub fn free(&self, addr: u32) {
         unsafe {
             let curr_block: &mut BlockHeader = &mut *((addr - HEADER_SIZE) as *mut BlockHeader);
