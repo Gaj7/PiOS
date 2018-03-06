@@ -46,8 +46,7 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
     mem::init(mem_tag);
 
     // Tests
-    test::test_ff();
-    uart::write_str("\n\n");
+    // test::test_ff(); // This test really shouldn't be run while we are actually initiallizing our heap, the test would overlap with the real thing
     test::test_box();
 
     // Recieve/transmit loop
