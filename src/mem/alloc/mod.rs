@@ -3,6 +3,7 @@ pub mod first_fit;
 
 use core::intrinsics::size_of;
 use core::ops::Deref;
+// use core::borrow::BorrowMut;
 use mem::HEAP_ALLOC;
 
 pub struct Box<T>{ //<T: ?Sized> ?
@@ -18,7 +19,11 @@ impl<T> Box<T> {
         }
     }
 
-    // Should manual deletion be allowed, or just let Drop take care of it?
+    pub fn borrow_mut(&self) -> &mut T {
+        unsafe { &mut (*self.elem) }
+    }
+
+    // not callable publically - box will free heap memory when it drops out of scope
     pub fn del(&self) {
         unsafe {
             HEAP_ALLOC.free(self.elem as u32);
@@ -36,6 +41,6 @@ impl<T> Drop for Box<T> {
 impl<T> Deref for Box<T> {
     type Target = T;
     fn deref(&self) -> &T {
-        unsafe { &*self.elem }
+        unsafe { &(*self.elem) }
     }
 }
