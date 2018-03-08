@@ -3,6 +3,7 @@ pub mod first_fit;
 
 use core::intrinsics::size_of;
 use core::ops::Deref;
+use core::ops::DerefMut;
 // use core::borrow::BorrowMut;
 use mem::HEAP_ALLOC;
 
@@ -18,11 +19,6 @@ impl<T> Box<T> {
             Box { elem: addr }
         }
     }
-
-    pub fn borrow_mut(&self) -> &mut T {
-        unsafe { &mut (*self.elem) }
-    }
-
     // not callable publically - box will free heap memory when it drops out of scope
     pub fn del(&self) {
         unsafe {
@@ -42,5 +38,11 @@ impl<T> Deref for Box<T> {
     type Target = T;
     fn deref(&self) -> &T {
         unsafe { &(*self.elem) }
+    }
+}
+
+impl<T> DerefMut for Box<T> {
+    fn deref_mut(&mut self) -> &mut T {
+        unsafe { &mut (*self.elem) }
     }
 }

@@ -23,10 +23,10 @@ impl<T> List<T> {
         self.head = Some(node);
     }
     pub fn pop(&mut self) -> Option<T> {
-        self.head.take().map(|node| {
-            let borrowed_node: &mut ListNode<T> = node.borrow_mut();
-            self.head = borrowed_node.next.take();
-            replace(&mut borrowed_node.elem, unsafe{ uninitialized()} )
+        self.head.take().map(|mut node| {
+            let node = &mut *node;
+            self.head = node.next.take();
+            replace(&mut node.elem, unsafe{ uninitialized() })
         })
     }
 }
