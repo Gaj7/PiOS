@@ -64,8 +64,9 @@ impl FirstFitAlloc {
                             return None;
                         }
                     }
+                    curr_addr = next_addr;
                 }
-                curr_addr = next_addr;
+                curr_addr += curr_block.size;
             }
         }
     }
