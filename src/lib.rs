@@ -34,9 +34,13 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
         },
         None => {
             uart::write_str("No mem tag found.\n");
+            // atag::AtagMem {
+            //     size: 1024 * 1024 * 128, //128 MB
+            //     start: 0,
+            // }
             atag::AtagMem {
-                size: 1024 * 1024 * 128, //128 MB
-                start: 0,
+                size: 1024, //1 KB
+                start: 128,
             }
         },
     };
@@ -47,7 +51,8 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
 
     // Tests
     // test::test_ff(); // This test really shouldn't be run while we are actually initiallizing our heap, the test would overlap with the real thing
-    test::test_box();
+    // test::test_box();
+    test::test_list();
 
     // Recieve/transmit loop
     loop {

@@ -1,6 +1,7 @@
 use uart;
 use mem::alloc::first_fit::FirstFitAlloc;
 use mem::alloc::Box;
+use mem::data_structs::list::List;
 
 pub fn test_ff() {
     uart::write_str("Testing: First fit memory allocator:\nSetting range 0 to 256.\n");
@@ -40,4 +41,25 @@ pub fn test_box() {
     uart::write_u32(*heap_num);
     uart::write_str(".\nDeleting our letter...\n");
     heap_num2.del();
+}
+
+pub fn test_list() {
+    uart::write_str("Pushing 1..5 to the stack.\n");
+    let mut stack = List::<u32>::new();
+    let mut i = 1 as u32;
+    while i <= 5 {
+        uart::write_str("Pushing ");
+        uart::write_u32(i);
+        uart::write_str("\n");
+        stack.push(i);
+        i += 1;
+    }
+    uart::write_str("Popping each element off the stack:\n");
+    i = 0;
+    while i < 5 {
+        uart::write_u32(stack.pop().unwrap());
+        uart::write_str(", ");
+        i += 1;
+    }
+    uart::write_c('\n' as u8);
 }
