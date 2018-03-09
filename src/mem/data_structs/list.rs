@@ -15,7 +15,6 @@ impl<T> List<T> {
     pub fn new() -> List<T> {
         List { head: None }
     }
-    // TODO: add printlns to pinpoint hang loc when pushing to nonempty list
     pub fn push(&mut self, e: T) {
         let node = Box::new(ListNode {
             elem: e,
