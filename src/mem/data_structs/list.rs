@@ -2,6 +2,7 @@ use core::mem::replace;
 use core::mem::uninitialized;
 use mem::alloc::Box;
 
+
 struct ListNode<T> {
     elem: T,
     next: Option<Box<ListNode<T>>>,
