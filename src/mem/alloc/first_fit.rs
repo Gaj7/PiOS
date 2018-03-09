@@ -33,7 +33,6 @@ impl FirstFitAlloc {
     // Combines neighboring free blocks of memory during traversal, returns address corresponding to first free block of memory large enough to fullfill the request.
     pub fn alloc(&self, size: u32) -> Option<u32> {
         let mut curr_addr = self.begin;
-        let mut next_addr = 0 as u32; // Just a placeholder value
         loop {
             unsafe {
                 let curr_block: &mut BlockHeader = &mut *(curr_addr as *mut BlockHeader);
@@ -41,7 +40,7 @@ impl FirstFitAlloc {
                     // if block is big enough, return a chunk of this one
                     if (curr_block.size - HEADER_SIZE) >= size {
                         curr_block.empty = false;
-                        if curr_block.size - size > HEADER_SIZE {
+                        if (curr_block.size - size - HEADER_SIZE) > HEADER_SIZE {
                             *((curr_addr + size + HEADER_SIZE) as *mut BlockHeader) = BlockHeader {
                                 empty: true,
                                 size: (curr_block.size - size) - HEADER_SIZE,
@@ -52,19 +51,18 @@ impl FirstFitAlloc {
                     }
                     // else if next block is free, combine them
                     else {
-                        next_addr = curr_addr + curr_block.size;
+                        let next_addr = curr_addr + curr_block.size;
                         if next_addr < (self.end - HEADER_SIZE) {
                             let next_block: &mut BlockHeader = &mut *(next_addr as *mut BlockHeader);
                             if next_block.empty {
                                 curr_block.size += next_block.size;
-                                continue;
+                            } else {
+                                curr_addr = next_addr;
                             }
-                        }
-                        else {
-                            return None;
-                        }
+                            continue;
+                        } // else:
+                        return None;
                     }
-                    curr_addr = next_addr;
                 }
                 curr_addr += curr_block.size;
             }
@@ -82,7 +80,7 @@ impl FirstFitAlloc {
     pub fn debug_print(&self) {
         let mut curr_addr = self.begin;
         let mut block_num = 0;
-        while curr_addr < self.end {
+        while curr_addr < (self.end - HEADER_SIZE) {
             unsafe {
                 let curr_block: &mut BlockHeader = &mut *(curr_addr as *mut BlockHeader);
                 uart::write_str("Block ");
@@ -92,6 +90,11 @@ impl FirstFitAlloc {
                 uart::write_str(",\tSize: ");
                 uart::write_u32(curr_block.size);
                 uart::write_str( if curr_block.empty {",\tEmpty.\n"} else {",\tFull.\n"});
+
+                if curr_block.size == 0 {
+                    uart::write_str("Oh no! We got a block with size 0. Our memory metatdata is corrupted.\n");
+                    break;
+                }
 
                 curr_addr += curr_block.size;
                 block_num += 1;
