@@ -4,8 +4,8 @@ pub mod first_fit;
 use core::intrinsics::size_of;
 use core::ops::Deref;
 use core::ops::DerefMut;
-// use core::borrow::BorrowMut;
 use mem::HEAP_ALLOC;
+use uart; //debugging
 
 pub struct Box<T>{ //<T: ?Sized> ?
     elem: *mut T,
@@ -14,8 +14,15 @@ pub struct Box<T>{ //<T: ?Sized> ?
 impl<T> Box<T> {
     pub fn new(x: T) -> Box<T> {
         unsafe {
-            let addr: *mut T = HEAP_ALLOC.alloc( size_of::<T>() as u32).unwrap() as *mut T; // allocate heap memory
-            *addr = x;                                                                      // copy content to heap addr
+            //let addr: *mut T = HEAP_ALLOC.alloc( size_of::<T>() as u32).unwrap() as *mut T;
+            let addr = match HEAP_ALLOC.alloc( size_of::<T>() as u32) { // allocate heap memory
+                Some(a) => a,
+                None => {
+                    uart::write_str("Couldn't alloc!!!!!\n");
+                    0
+                },
+            } as *mut T;
+            *addr = x;                                                 // copy content to heap addr
             Box { elem: addr }
         }
     }
