@@ -5,15 +5,16 @@
 #![feature(ptr_internals)]               //used in mem/alloc
 #![allow(dead_code)] //complaining about unused code is really annoying in early development
 
-use core::intrinsics::abort;
-
 // #[macro_use]
-pub mod uart;
-pub mod atag;
+pub mod sys;
 pub mod mem;
+pub mod atag;
 pub mod test;
 //pub mod video;
 //pub mod process;
+
+use core::intrinsics::abort;
+use sys::uart;
 
 #[no_mangle]
 pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
