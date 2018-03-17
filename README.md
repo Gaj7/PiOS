@@ -6,7 +6,7 @@ Make sure Rust Nightly is installed. We need to use the Nightly version of Rust 
 
 Then install Xargo. Xargo works just like Cargo, but makes cross-compiling much easier, as well as building without the standard library.
 
-The last thing we need for compiling is to install the GCC toolchain for our target architecture, 'arm-none-eabi-gcc'. We won't be using this for compiling, but we will need it for a little bit of assembling, and then linking everything together.
+The last thing we need for compiling is to install the GCC toolchain for our target architecture, 'arm-none-eabi-gcc' (it may be called 'gcc-arm-none-eabi' when you are downloading it). We won't be using this for compiling, but we will need it for a little bit of assembling, and then linking everything together.
 
 If you want to emulate the OS rather than testing on an actual Raspberry Pi, you are going to want to download qemu-system-arm, which is the the version of the QEMU emulator which, as the name suggests emulates, ARM systems.
 
