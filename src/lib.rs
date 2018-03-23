@@ -64,6 +64,7 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) -> ! {
 
 // These functions below provide definitions for symbols libcore
 // expects which are not present on our bare metal target.
+// Some of these should never be called, since we will abort on panic rather than unwind.
 
 #[lang = "panic_fmt"]
 #[no_mangle]
@@ -81,10 +82,3 @@ pub extern fn rust_eh_unwind_resume() {}
 
 #[no_mangle]
 pub extern fn __aeabi_unwind_cpp_pr0() {}
-
-// There has got to be a better solution than this...
-// This panic defn is expected when attempting plain ol' int addition
-#[no_mangle]
-pub extern fn _ZN4core9panicking5panic17h55432cad82b6074eE() -> ! {
-    loop {}
-}
