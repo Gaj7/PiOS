@@ -16,7 +16,7 @@ img: elf
 	qemu-img convert piOS.elf kernel.img
 
 run: elf
-	qemu-system-arm -kernel piOS.elf -serial stdio -machine raspi2
+	qemu-system-arm -kernel piOS.elf -nographic -machine raspi2
 
 clean:
 	rm -f boot.o piOS.elf kernel.img
