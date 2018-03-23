@@ -10,14 +10,13 @@ boot:
 	arm-none-eabi-gcc -mcpu=arm1176jzf-s -fpic -ffreestanding -c boot.S -o boot.o
 
 elf: build boot
-	arm-none-eabi-gcc -T linker.ld -o piOS.elf -ffreestanding -O2 -nostartfiles -nostdlib boot.o ./target/arm-none-eabihf/debug/libPiOS.rlib
+	arm-none-eabi-gcc -Wl,--gc-sections -T linker.ld -o piOS.elf -ffreestanding -O2 -nostartfiles -nostdlib boot.o ./target/arm-none-eabihf/debug/libPiOS.a
 
 img: elf
 	qemu-img convert piOS.elf kernel.img
-	# arm-none-eabi-objcopy -O binary piOS.elf kernel.img # not working for some reason, at least not with qemu
 
 run: elf
-	qemu-system-arm -M raspi2 -kernel piOS.elf -serial stdio
+	qemu-system-arm -kernel piOS.elf -serial stdio -machine raspi2
 
 clean:
 	rm -f boot.o piOS.elf kernel.img

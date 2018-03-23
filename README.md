@@ -1,5 +1,5 @@
 # PiOS: A small OS project for the Raspberry Pi
-PiOS is a toy OS that I am developing for Raspberry Pi systems in order to learn more about operating systems, embedded development, and Rust, the language I am using for this project. Of course, this is a tiny OS, and its only purpose is as a pedagogical exercise. Some features I hope to implement include processes, virtual memory, and context switching.
+PiOS is a toy OS that I am developing for Raspberry Pi systems in order to learn more about operating systems, embedded development, and Rust, the language I am using for this project. Of course, this is a tiny OS, and its only purpose is as a pedagogical exercise. Some features I hope to implement include dynamic memory allocation, virtual memory, processes, and context switching.
 
 ## Setup
 Make sure Rust Nightly is installed. We need to use the Nightly version of Rust because we will need to use a high number of unsafe features.
@@ -8,7 +8,7 @@ Then install Xargo. Xargo works just like Cargo, but makes cross-compiling much 
 
 The last thing we need for compiling is to install the GCC toolchain for our target architecture, 'arm-none-eabi-gcc' (it may be called 'gcc-arm-none-eabi' when you are downloading it). We won't be using this for compiling, but we will need it for a little bit of assembling, and then linking everything together.
 
-If you want to emulate the OS rather than testing on an actual Raspberry Pi, you are going to want to download qemu-system-arm, which is the the version of the QEMU emulator which, as the name suggests emulates, ARM systems.
+If you want to emulate the OS rather than testing on an actual Raspberry Pi, you are going to want to download qemu-system-arm, which is the the version of the QEMU emulator which, as the name suggests emulates, ARM systems. If QEMU isn't recognizing raspi2 as a valid machine, make sure your version of QEMU is at least 2.6.
 
 ## Compiling and Running
 This project uses a Makefile rather than relying entirely on the Cargo build system because the compilation process is complicated by targeting a bare-metal system.
@@ -16,6 +16,8 @@ To build the project and run it in QEMU, use the command:
 ```
 make run
 ```
+
+Note that raspberry pi emulation is currently quite limited. As this project moves forward, many features will be unavailable during emulation.
 
 To build this project for use on an actual Raspberry Pi, type:
 ```

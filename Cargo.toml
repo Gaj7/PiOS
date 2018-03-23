@@ -3,10 +3,17 @@ name = "PiOS"
 version = "0.1.0"
 authors = ["Grant Jurgensen <gajurgensen@gmail.com>"]
 
+[lib]
+crate-type = ["staticlib"]
+
 [profile.dev]
+opt-level = 0
 panic = "abort"
+lto = false
 
 [profile.release]
+opt-level = 3
 panic = "abort"
+lto = false
 
 [dependencies]

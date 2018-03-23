@@ -16,5 +16,6 @@
     "executables": true,
     "relocation-model": "static",
     "no-compiler-rt": true,
-    "panic-strategy": "abort"
+    "panic-strategy": "abort",
+    "disable-redzone": true
 }

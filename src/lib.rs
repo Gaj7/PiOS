@@ -5,6 +5,7 @@
 #![feature(ptr_internals)]               //used in mem/alloc
 #![allow(dead_code)] //complaining about unused code is really annoying in early development
 
+
 // #[macro_use]
 pub mod sys;
 pub mod mem;
@@ -13,11 +14,10 @@ pub mod test;
 //pub mod video;
 //pub mod process;
 
-use core::intrinsics::abort;
 use sys::uart;
 
 #[no_mangle]
-pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
+pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) -> ! {
     // UART init
     uart::init();
     uart::write_str("PiOS booted!\n");
@@ -65,17 +65,26 @@ pub extern fn kernel_main(_r0: u32, _r1: u32, atags_addr: u32) {
 // These functions below provide definitions for symbols libcore
 // expects which are not present on our bare metal target.
 
+#[lang = "panic_fmt"]
+#[no_mangle]
+pub extern fn rust_begin_panic(_: core::fmt::Arguments, _: &'static str, _: u32, _: u32) -> ! {
+    loop {}
+}
+
+#[lang = "eh_personality"]
+#[no_mangle]
+pub extern fn rust_eh_personality() {}
+
+#[lang = "eh_unwind_resume"]
+#[no_mangle]
+pub extern fn rust_eh_unwind_resume() {}
+
 #[no_mangle]
 pub extern fn __aeabi_unwind_cpp_pr0() {}
-
-#[lang = "panic_fmt"]
-pub extern fn panic_fmt(_: core::fmt::Arguments, _: &'static str, _: u32) -> ! {
-    unsafe { abort() }
-}
 
 // There has got to be a better solution than this...
 // This panic defn is expected when attempting plain ol' int addition
 #[no_mangle]
 pub extern fn _ZN4core9panicking5panic17h55432cad82b6074eE() -> ! {
-    unsafe { abort() }
+    loop {}
 }
